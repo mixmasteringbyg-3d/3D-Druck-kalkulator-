@@ -65,36 +65,28 @@ if file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. DEIN VOLLSTÄNDIGES IMPRESSUM (1:1 aus Screenshot)
+# 5. DEIN VOLLSTÄNDIGES IMPRESSUM MIT URHEBERRECHTS-HINWEIS
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
     ### Impressum
     **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
-    Mix Mastering By G  
-    c/o Smartservices GmbH  
-    Südstraße 31  
-    47475 Kamp-Lintfort  
+    Mix Mastering By G | c/o Smartservices GmbH | Südstraße 31 | 47475 Kamp-Lintfort  
 
-    **Kontakt:** Telefon: +49 155 63398574  
-    E-Mail: mixmasteringbyg@gmail.com  
+    **Kontakt:** Telefon: +49 155 63398574 | E-Mail: mixmasteringbyg@gmail.com  
 
     **Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:** Andrea Giancarlo Sedda  
-    (Anschrift wie oben)  
-
-    **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:  
-    [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/)  
-    Unsere E-Mail-Adresse finden Sie oben im Impressum.  
-
-    **Verbraucherstreitbeilegung / Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
 
     ---
 
-    ### Datenschutz
-    **1. Datenschutz auf einen Blick** Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.  
+    ### ⚠️ Wichtiger Hinweis zu Urheberrechten
+    **Verantwortung des Kunden:** Mit dem Hochladen einer Datei bestätigt der Kunde, dass er entweder der Urheber des Modells ist oder über die notwendigen Lizenzen und Berechtigungen für die Vervielfältigung (den Druck) verfügt. 
+    **Haftungsausschluss:** Mix Mastering By G übernimmt keine Haftung für Verletzungen von Urheber-, Patent- oder Markenrechten Dritter, die durch den Druckauftrag entstehen. Sollten durch die Verletzung solcher Rechte Kosten oder Strafen entstehen, stellt der Kunde Mix Mastering By G von sämtlichen Ansprüchen Dritter frei.
 
-    **2. Datenerfassung auf dieser Webseite** * **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.  
-    * **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben inklusive der Kontaktdaten zwecks Bearbeitung der Anfrage bei uns gespeichert.  
+    ---
 
-    **3. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
+    ### Datenschutzerklärung
+    **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.  
+    **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben zwecks Bearbeitung der Anfrage bei uns gespeichert.  
+    **Hosting:** Diese Webseite wird über Streamlit Cloud gehostet.
     """)
