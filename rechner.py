@@ -6,12 +6,11 @@ import os
 # 1. Seite & Design
 st.set_page_config(page_title="3D-Print Calc", page_icon="💰", layout="wide")
 
-# CSS für besseres Aussehen der Buttons
 st.markdown("""
     <style>
-    .stButton>button { width: 100%; border-radius: 10px; height: 3em; font-weight: bold; }
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    header {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -45,7 +44,6 @@ if file:
         total = gewicht * material_daten[wahl]["preis_per_g"]
         if total < 5.0: total = 5.0
 
-        # Anzeige in Spalten
         col_main, col_side = st.columns([2, 1])
         
         with col_main:
@@ -62,29 +60,41 @@ if file:
             st.markdown(f'<a href="{whatsapp}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366;color:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;">💬 WhatsApp</div></a>', unsafe_allow_html=True)
 
     except Exception as e:
-        st.error(f"Fehler bei der Analyse: {e}")
+        st.error(f"Fehler: {e}")
     finally:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. VOLLSTÄNDIGES IMPRESSUM 1:1
+# 5. DEIN VOLLSTÄNDIGES IMPRESSUM (1:1 aus Screenshot)
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
     ### Impressum
     **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
-    Mix Mastering By G | c/o Smartservices GmbH | Südstraße 31 | 47475 Kamp-Lintfort  
+    Mix Mastering By G  
+    c/o Smartservices GmbH  
+    Südstraße 31  
+    47475 Kamp-Lintfort  
 
-    **Kontakt:** Telefon: +49 155 63398574 | E-Mail: mixmasteringbyg@gmail.com  
+    **Kontakt:** Telefon: +49 155 63398574  
+    E-Mail: mixmasteringbyg@gmail.com  
 
     **Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:** Andrea Giancarlo Sedda  
+    (Anschrift wie oben)  
 
-    **EU-Streitschlichtung:** [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/)  
+    **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:  
+    [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/)  
+    Unsere E-Mail-Adresse finden Sie oben im Impressum.  
 
-    **Verbraucherstreitbeilegung:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
+    **Verbraucherstreitbeilegung / Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
 
     ---
 
     ### Datenschutz
-    Wir behandeln Ihre Daten vertraulich. STL-Dateien werden nur temporär zur Berechnung verarbeitet und danach sofort gelöscht. Bei Kontakt per WhatsApp oder E-Mail speichern wir Ihre Daten nur zur Bearbeitung der Anfrage.
+    **1. Datenschutz auf einen Blick** Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.  
+
+    **2. Datenerfassung auf dieser Webseite** * **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.  
+    * **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben inklusive der Kontaktdaten zwecks Bearbeitung der Anfrage bei uns gespeichert.  
+
+    **3. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
     """)
