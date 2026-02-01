@@ -53,7 +53,7 @@ if file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. VOLLSTÄNDIGES IMPRESSUM & DATENSCHUTZ
+# 5. DEIN IMPRESSUM 1ZU1
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
@@ -72,17 +72,16 @@ with st.expander("⚖️ Impressum & Datenschutz"):
 
     **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:  
     [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/)  
-    Unsere E-Mail-Adresse finden Sie oben im Impressum.
+    Unsere E-Mail-Adresse finden Sie oben im Impressum.  
 
-    **Verbraucherstreitbeilegung/Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+    **Verbraucherstreitbeilegung / Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
 
     ---
 
-    ### Datenschutzerklärung
-    **1. Datenschutz auf einen Blick** Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.
+    ### Datenschutz
+    Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.  
 
-    **2. Datenerfassung auf dieser Webseite** * **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.
-    * **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben aus der Anfrage inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert.
+    **Datenerfassung auf dieser Webseite:** Die Nutzung dieser Webseite ist ohne Angabe personenbezogener Daten möglich. Wenn Sie eine STL-Datei hochladen, wird diese nur temporär zur Berechnung verarbeitet und nicht dauerhaft gespeichert.  
 
-    **3. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
+    **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben zwecks Bearbeitung der Anfrage gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
     """)
