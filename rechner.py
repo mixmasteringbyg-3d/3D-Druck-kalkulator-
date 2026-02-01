@@ -46,7 +46,7 @@ if file:
         mailto = f"mailto:mixmasteringbyg@gmail.com?subject=3D-Druck Anfrage&body={nachricht}"
         whatsapp = f"https://wa.me/4915563398574?text={nachricht.replace(' ', '%20')}"
 
-        # Die "echten" Buttons (wie vorhin)
+        # Buttons im Original-Design
         col1, col2 = st.columns(2)
         with col1:
             st.markdown(f'<a href="{mailto}" style="text-decoration:none;"><div style="background-color:#ff4b4b;color:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;">📩 E-Mail senden</div></a>', unsafe_allow_html=True)
@@ -80,4 +80,14 @@ with st.expander("⚖️ Impressum & Datenschutz"):
     [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/)  
     Unsere E-Mail-Adresse finden Sie oben im Impressum.  
 
-    **Verbraucherstreitbeilegung / Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlicht
+    **Verbraucherstreitbeilegung / Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
+
+    ---
+
+    ### Datenschutz
+    Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.  
+
+    **Datenerfassung auf dieser Webseite:** Die Nutzung dieser Webseite ist ohne Angabe personenbezogener Daten möglich. Wenn Sie eine STL-Datei hochladen, wird diese nur temporär zur Berechnung verarbeitet und nicht dauerhaft gespeichert.  
+
+    **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben zwecks Bearbeitung der Anfrage gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
+    """)
