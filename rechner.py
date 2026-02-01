@@ -8,7 +8,7 @@ st.set_page_config(page_title="3D-Print Calc", page_icon="💰")
 
 st.title("🚀 3D-Druck Preis-Kalkulator")
 
-# 2. Material-Preise (Wieder inklusive PC!)
+# 2. Material-Preise
 material_daten = {
     "PLA": {"preis_per_g": 0.15, "dichte": 1.25},   
     "PETG": {"preis_per_g": 0.22, "dichte": 1.27},
@@ -29,23 +29,17 @@ if file:
         tmp_path = tmp.name
 
     try:
-        # Berechnung
         mesh = trimesh.load(tmp_path)
         volumen_netto = mesh.volume / 1000  
         effektive_fullung = (infill / 100) + 0.15 
         gewicht = volumen_netto * material_daten[wahl]["dichte"] * effektive_fullung
         total = gewicht * material_daten[wahl]["preis_per_g"]
-        
-        # Mindestpreis 5€
         if total < 5.0: total = 5.0
 
-        # Ergebnisanzeige (wie im Screenshot)
         st.success(f"### Preis: {total:.2f} €")
         st.write(f"**Gewicht:** {gewicht:.1f}g")
         
         st.divider()
-        
-        # Kontakt-Links
         nachricht = f"Anfrage für {file.name}, Material: {wahl}, Infill: {infill}%. Preis: {total:.2f}€"
         mailto = f"mailto:mixmasteringbyg@gmail.com?subject=3D-Druck Anfrage&body={nachricht}"
         whatsapp = f"https://wa.me/4915563398574?text={nachricht.replace(' ', '%20')}"
@@ -59,7 +53,29 @@ if file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. Impressum (Platzhalter am Ende)
+# 5. Impressum & Datenschutz (Rechtlich korrekt eingebunden)
 st.divider()
-with st.expander("Impressum"):
-    st.write("Mix Mastering By G | Andrea Giancarlo Sedda")
+with st.expander("⚖️ Impressum & Datenschutz"):
+    st.markdown("""
+    ### Impressum
+    **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
+    Mix Mastering By G  
+    c/o Smartservices GmbH  
+    Südstraße 31  
+    47475 Kamp-Lintfort  
+
+    **Kontakt:** Telefon: +49 155 63398574  
+    E-Mail: mixmasteringbyg@gmail.com  
+
+    **Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:** Andrea Giancarlo Sedda  
+    (Anschrift wie oben)  
+
+    ---
+
+    ### Datenschutz
+    **1. Datenschutz auf einen Blick** Die Nutzung dieser Webseite ist ohne Angabe personenbezogener Daten möglich. Wenn Sie uns eine Datei hochladen, wird diese nur temporär für die Preisberechnung verarbeitet und danach sofort gelöscht.
+
+    **2. Kontakt per E-Mail oder WhatsApp** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben zwecks Bearbeitung der Anfrage gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.
+
+    **3. Analyse-Tools** Wir verwenden auf dieser Webseite keine Tracking-Tools oder Cookies von Drittanbietern.
+    """)
