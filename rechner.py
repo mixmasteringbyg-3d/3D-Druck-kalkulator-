@@ -65,7 +65,7 @@ if file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. VOLLSTÄNDIGES IMPRESSUM & DSGVO-DATENSCHUTZ
+# 5. DEIN IMPRESSUM & DEIN DATENSCHUTZ (Unangetastet)
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
@@ -79,30 +79,27 @@ with st.expander("⚖️ Impressum & Datenschutz"):
     **Kontakt:** E-Mail: mixmasteringbyg@gmail.com  
     Telefon: +49 155 63398574  
 
-    **Umsatzsteuer-ID:** Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.  
+    **Umsatzsteuer-ID:** Gemäß § 19 UStG wird keine Umsatzsteuer berechnet und daher keine Umsatzsteuer-Identifikationsnummer ausgewiesen.  
 
-    **Redaktionell verantwortlich:** Andrea Giancarlo Sedda (Anschrift wie oben)  
+    **Redaktionell verantwortlich:** Andrea Giancarlo Sedda  
+    c/o Smartservices GmbH  
+    Südstraße 31  
+    47475 Kamp-Lintfort  
 
-    ---
+    **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/.  
+    Unsere E-Mail-Adresse finden Sie oben im Impressum.  
 
-    ### Datenschutzerklärung (DSGVO)
-    **1. Verantwortlicher** Verantwortlich für die Datenverarbeitung auf dieser Website ist Andrea Giancarlo Sedda (Kontaktdaten siehe Impressum).
-
-    **2. Datenerfassung & STL-Upload** Bei der Nutzung des Kalkulators wird die hochgeladene STL-Datei temporär auf dem Server verarbeitet, um das Volumen zu berechnen.  
-    * **Zweck:** Preisberechnung.  
-    * **Dauer:** Die Datei wird unmittelbar nach der Analyse gelöscht und nicht dauerhaft gespeichert.  
-    * **Rechtsgrundlage:** Art. 6 Abs. 1 lit. b DSGVO (Vertragsvorbereitung).
-
-    **3. Kontakt per WhatsApp & E-Mail** Wenn Sie die Buttons nutzen, verlassen Sie diese Website. Es werden Daten (Nachrichtentext) an WhatsApp oder Ihren E-Mail-Provider übermittelt.  
-    * **WhatsApp:** Bitte beachten Sie, dass WhatsApp (Meta Platforms Inc.) Daten außerhalb der EU verarbeiten kann.  
-    * **Zweck:** Bearbeitung Ihrer Anfrage.
-
-    **4. Hosting (Streamlit Cloud)** Diese Website wird über die Streamlit Cloud gehostet. Dabei werden Server-Logfiles (IP-Adresse, Datum/Uhrzeit) automatisch erfasst. Dies ist für den technischen Betrieb notwendig (Art. 6 Abs. 1 lit. f DSGVO).
-
-    **5. Ihre Rechte** Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer personenbezogenen Daten. Kontaktieren Sie uns dazu unter der oben genannten E-Mail-Adresse.
+    **Verbraucherstreitbeilegung/Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
 
     ---
 
-    ### ⚠️ Urheberrechtshinweis
-    Der Kunde garantiert, dass die hochgeladene Datei keine Rechte Dritter verletzt. Mix Mastering By G übernimmt keine Haftung für Urheberrechtsverletzungen.
+    ### Datenschutzerklärung
+    **1. Datenschutz auf einen Blick** Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.
+
+    **2. Datenerfassung auf dieser Webseite** * **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.  
+    * **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben aus der Anfrage inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert.
+
+    **3. Urheberrechte Dritter** Mit dem Hochladen einer Datei bestätigt der Kunde, dass er der Urheber des Modells ist oder über die notwendigen Lizenzen für die Vervielfältigung verfügt. Mix Mastering By G übernimmt keine Haftung für Verletzungen von Urheber-, Patent- oder Markenrechten Dritter. Der Kunde stellt den Betreiber von sämtlichen Ansprüchen Dritter frei.
+
+    **4. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
     """)
