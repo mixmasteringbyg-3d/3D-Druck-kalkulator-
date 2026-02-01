@@ -65,7 +65,7 @@ if file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. DEIN IMPRESSUM & DEIN DATENSCHUTZ (Unangetastet)
+# 5. IMPRESSUM, URHEBERRECHT & DATENSCHUTZ
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
@@ -93,13 +93,16 @@ with st.expander("⚖️ Impressum & Datenschutz"):
 
     ---
 
+    ### ⚠️ Wichtiger Hinweis zu Urheberrechten
+    Mit dem Hochladen einer Datei bestätigt der Kunde, dass er über die notwendigen Lizenzen für die Vervielfältigung verfügt. Mix Mastering By G übernimmt keine Haftung für Verletzungen von Urheber-, Patent- oder Markenrechten Dritter. Der Kunde stellt Mix Mastering By G von sämtlichen Ansprüchen Dritter frei.
+
+    ---
+
     ### Datenschutzerklärung
     **1. Datenschutz auf einen Blick** Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.
 
     **2. Datenerfassung auf dieser Webseite** * **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.  
     * **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben aus der Anfrage inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert.
 
-    **3. Urheberrechte Dritter** Mit dem Hochladen einer Datei bestätigt der Kunde, dass er der Urheber des Modells ist oder über die notwendigen Lizenzen für die Vervielfältigung verfügt. Mix Mastering By G übernimmt keine Haftung für Verletzungen von Urheber-, Patent- oder Markenrechten Dritter. Der Kunde stellt den Betreiber von sämtlichen Ansprüchen Dritter frei.
-
-    **4. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
+    **3. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
     """)
