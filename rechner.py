@@ -65,7 +65,7 @@ if file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. DEIN VOLLSTÄNDIGES IMPRESSUM & RECHTSHINWEISE
+# 5. VOLLSTÄNDIGES IMPRESSUM & DSGVO-DATENSCHUTZ
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
@@ -79,27 +79,30 @@ with st.expander("⚖️ Impressum & Datenschutz"):
     **Kontakt:** E-Mail: mixmasteringbyg@gmail.com  
     Telefon: +49 155 63398574  
 
-    **Umsatzsteuer-ID:** Gemäß § 19 UStG wird keine Umsatzsteuer berechnet und daher keine Umsatzsteuer-Identifikationsnummer ausgewiesen.  
+    **Umsatzsteuer-ID:** Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.  
 
-    **Redaktionell verantwortlich:** Andrea Giancarlo Sedda  
-    c/o Smartservices GmbH  
-    Südstraße 31  
-    47475 Kamp-Lintfort  
-
-    **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/.  
-    Unsere E-Mail-Adresse finden Sie oben im Impressum.  
-
-    **Verbraucherstreitbeilegung/Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
+    **Redaktionell verantwortlich:** Andrea Giancarlo Sedda (Anschrift wie oben)  
 
     ---
 
-    ### ⚠️ Wichtiger Hinweis zu Urheberrechten
-    Mit dem Hochladen einer Datei bestätigt der Kunde, dass er über die notwendigen Lizenzen für die Vervielfältigung verfügt. Mix Mastering By G übernimmt keine Haftung für Verletzungen von Urheber-, Patent- oder Markenrechten Dritter. Der Kunde stellt Mix Mastering By G von sämtlichen Ansprüchen Dritter frei.
+    ### Datenschutzerklärung (DSGVO)
+    **1. Verantwortlicher** Verantwortlich für die Datenverarbeitung auf dieser Website ist Andrea Giancarlo Sedda (Kontaktdaten siehe Impressum).
+
+    **2. Datenerfassung & STL-Upload** Bei der Nutzung des Kalkulators wird die hochgeladene STL-Datei temporär auf dem Server verarbeitet, um das Volumen zu berechnen.  
+    * **Zweck:** Preisberechnung.  
+    * **Dauer:** Die Datei wird unmittelbar nach der Analyse gelöscht und nicht dauerhaft gespeichert.  
+    * **Rechtsgrundlage:** Art. 6 Abs. 1 lit. b DSGVO (Vertragsvorbereitung).
+
+    **3. Kontakt per WhatsApp & E-Mail** Wenn Sie die Buttons nutzen, verlassen Sie diese Website. Es werden Daten (Nachrichtentext) an WhatsApp oder Ihren E-Mail-Provider übermittelt.  
+    * **WhatsApp:** Bitte beachten Sie, dass WhatsApp (Meta Platforms Inc.) Daten außerhalb der EU verarbeiten kann.  
+    * **Zweck:** Bearbeitung Ihrer Anfrage.
+
+    **4. Hosting (Streamlit Cloud)** Diese Website wird über die Streamlit Cloud gehostet. Dabei werden Server-Logfiles (IP-Adresse, Datum/Uhrzeit) automatisch erfasst. Dies ist für den technischen Betrieb notwendig (Art. 6 Abs. 1 lit. f DSGVO).
+
+    **5. Ihre Rechte** Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer personenbezogenen Daten. Kontaktieren Sie uns dazu unter der oben genannten E-Mail-Adresse.
 
     ---
 
-    ### Datenschutzerklärung
-    **STL-Dateien:** Dateien werden nur kurzzeitig zur Berechnung verarbeitet und danach unmittelbar gelöscht. Es findet keine dauerhafte Speicherung statt.  
-    **Kontakt:** Bei Kontakt per E-Mail oder WhatsApp speichern wir Ihre Angaben zwecks Bearbeitung der Anfrage.  
-    **Hosting:** Diese Webseite wird über Streamlit Cloud gehostet.
+    ### ⚠️ Urheberrechtshinweis
+    Der Kunde garantiert, dass die hochgeladene Datei keine Rechte Dritter verletzt. Mix Mastering By G übernimmt keine Haftung für Urheberrechtsverletzungen.
     """)
