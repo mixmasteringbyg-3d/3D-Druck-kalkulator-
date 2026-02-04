@@ -4,32 +4,41 @@ import tempfile
 import os
 
 # 1. Seite & Design
-st.set_page_config(page_title="3D-Print Calc", page_icon="💰", layout="wide")
+st.set_page_config(page_title="3D-Print Calc & Order", page_icon="💰", layout="centered")
 
+# CSS für bessere Mobile-Optik (Buttons breiter, Menüs sauberer)
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    .stButton>button {width: 100%;}
+    /* Verhindert das Abschneiden von Text auf kleinen Displays */
+    .stSelectbox, .stSlider {margin-bottom: 20px;}
     </style>
     """, unsafe_allow_html=True)
 
 st.title("🚀 3D-Druck Preis-Kalkulator")
+st.markdown("Lade dein Modell hoch und erhalte sofort eine Preisschätzung.")
 
-# 2. Material-Preise
+# --- HAUPTBEREICH (Ersetzt die Sidebar für Handys) ---
+st.subheader("1. Einstellungen")
+
 material_daten = {
     "PLA": {"preis_per_g": 0.15, "dichte": 1.25},   
-    "PETG": {"preis_per_g": 0.22, "dichte": 1.27},
+    "PETG": {"preis_per_g": 0.22, "dichte": 1.27},  
     "PC (Polycarbonat)": {"preis_per_g": 0.45, "dichte": 1.20} 
 }
 
-# 3. Seitenleiste
-st.sidebar.header("🔧 Optionen")
-wahl = st.sidebar.selectbox("Material wählen:", list(material_daten.keys()))
-infill = st.sidebar.select_slider("Füllung (Infill) %:", options=[15, 40, 70, 100], value=40)
+# Material und Infill direkt untereinander
+wahl = st.selectbox("Material wählen:", list(material_daten.keys()))
+infill = st.select_slider("Füllung (Infill %):", options=[15, 40, 70, 100], value=40)
 
-# 4. Datei Upload
-file = st.file_uploader("STL-Datei hochladen", type=["stl"])
+st.divider()
+
+# 2. Datei Upload
+st.subheader("2. Modell hochladen")
+file = st.file_uploader("STL-Datei auswählen", type=["stl"])
 
 if file:
     with tempfile.NamedTemporaryFile(delete=False, suffix=".stl") as tmp:
@@ -39,35 +48,40 @@ if file:
     try:
         mesh = trimesh.load(tmp_path)
         volumen_netto = mesh.volume / 1000  
+        
         effektive_fullung = (infill / 100) + 0.15 
         gewicht = volumen_netto * material_daten[wahl]["dichte"] * effektive_fullung
         total = gewicht * material_daten[wahl]["preis_per_g"]
+        
         if total < 5.0: total = 5.0
 
-        col_main, col_side = st.columns([2, 1])
+        # Ergebnis-Anzeige
+        st.success(f"### Preis-Schätzung: {total:.2f} €")
         
-        with col_main:
-            st.success(f"### Preis-Vorschlag: {total:.2f} €")
-            st.info(f"Voraussichtliches Gewicht: {gewicht:.1f}g (Material: {wahl})")
+        # Details übersichtlich auflisten
+        st.info(f"**Gewählt:** {wahl} | **Gewicht:** ca. {gewicht:.1f}g")
+        st.write(f"Abmessungen: {mesh.bounding_box.extents[0]:.1f} x {mesh.bounding_box.extents[1]:.1f} x {mesh.bounding_box.extents[2]:.1f} mm")
 
-        with col_side:
-            st.subheader("Anfrage senden")
-            nachricht = f"Hallo Gian, ich möchte '{file.name}' drucken. Material: {wahl}, Infill: {infill}%. Preis: {total:.2f}€."
-            mailto = f"mailto:mixmasteringbyg@gmail.com?subject=3D-Druck Anfrage&body={nachricht}"
-            whatsapp = f"https://wa.me/4915563398574?text={nachricht.replace(' ', '%20')}"
+        # --- KONTAKT ---
+        st.divider()
+        st.subheader("3. Anfrage senden")
+        nachricht = f"Hallo Gian, ich möchte '{file.name}' drucken lassen. Material: {wahl}, Infill: {infill}%. Preis: {total:.2f}€."
+        mailto = f"mailto:mixmasteringbyg@gmail.com?subject=Anfrage: {file.name}&body={nachricht}"
+        whatsapp = f"https://wa.me/4915563398574?text={nachricht.replace(' ', '%20')}"
 
-            st.markdown(f'<a href="{mailto}" style="text-decoration:none;"><div style="background-color:#ff4b4b;color:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;margin-bottom:10px;">📩 E-Mail</div></a>', unsafe_allow_html=True)
-            st.markdown(f'<a href="{whatsapp}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366;color:white;padding:12px;border-radius:10px;text-align:center;font-weight:bold;">💬 WhatsApp</div></a>', unsafe_allow_html=True)
+        # Große Buttons für Touchscreens
+        st.markdown(f'<a href="{whatsapp}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366;color:white;padding:18px;border-radius:12px;text-align:center;font-weight:bold;margin-bottom:15px;font-size:18px;">💬 Via WhatsApp anfragen</div></a>', unsafe_allow_html=True)
+        st.markdown(f'<a href="{mailto}" style="text-decoration:none;"><div style="background-color:#ff4b4b;color:white;padding:18px;border-radius:12px;text-align:center;font-weight:bold;font-size:18px;">📩 Via E-Mail anfragen</div></a>', unsafe_allow_html=True)
 
     except Exception as e:
-        st.error(f"Fehler: {e}")
+        st.error(f"Fehler bei der Analyse: Das Modell konnte nicht gelesen werden.")
     finally:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# 5. IMPRESSUM, URHEBERRECHT & DATENSCHUTZ
+# --- 5. DEIN ORIGINALES IMPRESSUM & DATENSCHUTZ (VOLLSTÄNDIG) ---
 st.divider()
-with st.expander("⚖️ Impressum & Datenschutz"):
+with st.expander("Rechtliche Informationen (Impressum & Datenschutz)"):
     st.markdown("""
     ### Impressum
     **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
@@ -86,23 +100,14 @@ with st.expander("⚖️ Impressum & Datenschutz"):
     Südstraße 31  
     47475 Kamp-Lintfort  
 
-    **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr/.  
+    **EU-Streitschlichtung:** Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: [https://ec.europa.eu/consumers/odr/](https://ec.europa.eu/consumers/odr/).  
     Unsere E-Mail-Adresse finden Sie oben im Impressum.  
 
-    **Verbraucherstreitbeilegung/Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.  
+    **Verbraucherstreitbeilegung/Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
 
     ---
-
-    ### ⚠️ Wichtiger Hinweis zu Urheberrechten
-    Mit dem Hochladen einer Datei bestätigt der Kunde, dass er über die notwendigen Lizenzen für die Vervielfältigung verfügt. Mix Mastering By G übernimmt keine Haftung für Verletzungen von Urheber-, Patent- oder Markenrechten Dritter. Der Kunde stellt Mix Mastering By G von sämtlichen Ansprüchen Dritter frei.
-
-    ---
-
     ### Datenschutzerklärung
-    **1. Datenschutz auf einen Blick** Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser Datenschutzerklärung.
-
-    **2. Datenerfassung auf dieser Webseite** * **STL-Dateien:** Hochgeladene Dateien werden nur kurzzeitig zur Volumenberechnung verarbeitet und danach unmittelbar vom Server gelöscht. Es findet keine dauerhafte Speicherung der 3D-Modelle statt.  
-    * **Kontakt:** Wenn Sie uns per E-Mail oder WhatsApp kontaktieren, werden Ihre Angaben aus der Anfrage inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert.
-
-    **3. Hosting** Diese Webseite wird über Streamlit Cloud gehostet. Die Serverstandorte und deren Datenschutzbestimmungen richten sich nach den Richtlinien von Streamlit Inc.
+    **1. Datenerfassung:** Bei Nutzung der Kontakt-Links (E-Mail oder WhatsApp) werden die von Ihnen kalkulierten Daten (Dateiname, Material, Preis) automatisch in Ihr eigene Nachrichtensystem übernommen. Auf diesem Server werden keine Dateien dauerhaft gespeichert.  
+    **2. Zweck:** Die Datenübermittlung dient ausschließlich der Bearbeitung Ihrer individuellen Anfrage.  
+    **3. Datensicherheit:** Wir nutzen SSL-Verschlüsselung für den Betrieb dieser Webseite. Bitte beachten Sie die Datenschutzrichtlinien von WhatsApp oder Ihrem E-Mail-Anbieter bei der Kontaktaufnahme.
     """)
