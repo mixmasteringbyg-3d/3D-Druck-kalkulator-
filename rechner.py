@@ -6,26 +6,44 @@ import smtplib
 from email.message import EmailMessage
 
 # --- 1. KONFIGURATION ---
-# WICHTIG: Erstelle ein "App-Passwort" in deinem Google Account (nicht dein normales PW!)
 EMAIL_SENDER = "mixmasteringbyg@gmail.com" 
-EMAIL_PASSWORD = st.secrets["email_password"] # Passwort in Streamlit Secrets hinterlegen
 MY_EMAIL = "mixmasteringbyg@gmail.com"
 
 st.set_page_config(page_title="3D-Print Calc & Order", page_icon="💰", layout="centered")
 
-# Modernes Design
+# Modernes & cooles Design (Dein Style)
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
-    .stButton>button { width: 100%; border-radius: 15px; height: 3.5em; font-weight: bold; font-size: 1.1rem; }
-    div.stButton > button:first-child { background-color: #25D366; color: white; border: none; }
-    .price-box { padding: 20px; background-color: #1e1e1e; border-radius: 15px; border-left: 5px solid #25D366; margin-bottom: 20px; }
+    .stButton>button {
+        width: 100%;
+        border-radius: 15px;
+        height: 3.5em;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: 0.3s;
+    }
+    div.stButton > button:first-child {
+        background-color: #25D366;
+        color: white;
+        border: none;
+    }
+    .price-box {
+        padding: 20px;
+        background-color: #1e1e1e;
+        border-radius: 15px;
+        border-left: 5px solid #25D366;
+        margin-bottom: 20px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. E-Mail Versand (Alternative zu Drive)
+# 2. E-Mail Versand Funktion
 def send_email_with_file(file_path, file_name, preis, material):
     try:
+        # Hier holen wir das Passwort sicher aus den Secrets
+        email_password = st.secrets["email_password"]
+        
         msg = EmailMessage()
         msg['Subject'] = f"NEUER AUFTRAG: {preis}€ - {material}"
         msg['From'] = EMAIL_SENDER
@@ -37,11 +55,11 @@ def send_email_with_file(file_path, file_name, preis, material):
             msg.add_attachment(file_data, maintype='application', subtype='octet-stream', filename=file_name)
 
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
+            smtp.login(EMAIL_SENDER, email_password)
             smtp.send_message(msg)
         return True
     except Exception as e:
-        st.error(f"⚠️ Mail-Fehler: {e}")
+        st.error(f"⚠️ Mail-Versand fehlgeschlagen: {e}")
         return False
 
 # --- HAUPTBEREICH ---
@@ -55,10 +73,13 @@ material_daten = {
 
 st.subheader("⚙️ 1. Konfiguration")
 col_a, col_b = st.columns(2)
-with col_a: wahl = st.selectbox("Material wählen:", list(material_daten.keys()))
-with col_b: infill = st.select_slider("Füllung (Infill %):", options=[15, 40, 70, 100], value=40)
+with col_a:
+    wahl = st.selectbox("Material wählen:", list(material_daten.keys()))
+with col_b:
+    infill = st.select_slider("Füllung (Infill %):", options=[15, 40, 70, 100], value=40)
 
 st.divider()
+
 st.subheader("📂 2. Modell hochladen")
 uploaded_file = st.file_uploader("Wähle deine Datei", type=["stl"])
 
@@ -74,47 +95,82 @@ if uploaded_file:
         gewicht = volumen_netto * material_daten[wahl]["dichte"] * effektive_fullung
         total = max(5.0, gewicht * material_daten[wahl]["preis_per_g"])
 
-        st.markdown(f'<div class="price-box"><h3 style="margin:0;">💰 Preis: {total:.2f} €</h3><p style="margin:5px 0 0 0; color:#888;">{uploaded_file.name} | ca. {gewicht:.1f}g</p></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+            <div class="price-box">
+                <h3 style="margin:0;">💰 Kalkulierter Preis: {total:.2f} €</h3>
+                <p style="margin:5px 0 0 0; color:#888;">Modell: {uploaded_file.name} | ca. {gewicht:.1f}g</p>
+            </div>
+        """, unsafe_allow_html=True)
         
         st.divider()
         st.subheader("📩 3. Bestätigung & Versand")
         
-        if 'sent' not in st.session_state: st.session_state.sent = False
+        if 'sent' not in st.session_state:
+            st.session_state.sent = False
 
         c1, c2 = st.columns(2)
         with c1:
             if st.button("✅ Datei jetzt an Gian senden"):
-                with st.spinner('Wird gesendet...'):
+                with st.spinner('Datei wird per Mail übertragen...'):
                     if send_email_with_file(tmp_path, uploaded_file.name, f"{total:.2f}", wahl):
                         st.session_state.sent = True
                         st.balloons()
         with c2:
             if st.button("❌ Abbrechen"):
                 st.session_state.sent = False
-                st.warning("Abgebrochen.")
+                st.warning("Vorgang abgebrochen.")
 
         if st.session_state.sent:
-            st.success("Datei wurde per E-Mail an Gian geschickt!")
-            nachricht = f"Hallo Gian, ich habe '{uploaded_file.name}' gesendet. Preis: {total:.2f}€, Material: {wahl}. Ich bestätige die Urheberrechte."
+            st.success("Datei ist sicher in Gians Postfach gelandet!")
+            nachricht = (f"Hallo Gian, ich habe '{uploaded_file.name}' gesendet. "
+                         f"Preis: {total:.2f}€, Material: {wahl}. Ich bestätige die Urheberrechte.")
             wa_link = f"https://wa.me/4915563398574?text={nachricht.replace(' ', '%20')}"
-            st.markdown(f'<a href="{wa_link}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366; color:white; padding:20px; border-radius:15px; text-align:center; font-weight:bold; font-size:18px; margin-top:20px;">💬 JETZT PER WHATSAPP BESTELLEN</div></a>', unsafe_allow_html=True)
+            st.markdown(f"""
+                <a href="{wa_link}" target="_blank" style="text-decoration:none;">
+                    <div style="background-color:#25D366; color:white; padding:20px; border-radius:15px; text-align:center; font-weight:bold; font-size:18px; margin-top:20px;">
+                        💬 JETZT PER WHATSAPP BESTELLEN
+                    </div>
+                </a>
+            """, unsafe_allow_html=True)
 
+    except Exception as e:
+        st.error(f"Fehler bei Analyse: {e}")
     finally:
-        if os.path.exists(tmp_path): os.remove(tmp_path)
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
-# --- IMPRESSUM ---
+# --- DEIN KOMPLETTES IMPRESSUM & DATENSCHUTZ ---
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
     ### Impressum
-    **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda | Mix Mastering By G | c/o Smartservices GmbH | Südstraße 31 | 47475 Kamp-Lintfort  
-    **Kontakt:** E-Mail: mixmasteringbyg@gmail.com | Telefon: +49 155 63398574  
-    **Umsatzsteuer:** Gemäß § 19 UStG keine Umsatzsteuer (Kleingewerberegelung).  
-    **Verantwortlich:** Andrea Giancarlo Sedda (Anschrift oben)  
+    **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
+    Mix Mastering By G  
+    c/o Smartservices GmbH  
+    Südstraße 31  
+    47475 Kamp-Lintfort  
+
+    **Kontakt:** E-Mail: mixmasteringbyg@gmail.com  
+    Telefon: +49 155 63398574  
+
+    **Umsatzsteuer:** Gemäß § 19 UStG wird keine Umsatzsteuer berechnet (Kleingewerberegelung).  
+
+    **Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:** Andrea Giancarlo Sedda  
+    (Anschrift wie oben)  
+
     ---
+
     ### Urheberrecht & Haftung
-    Nutzer versichert Rechte an Dateien. Keine Prüfung auf Markenrechte. Nutzer stellt Betreiber von Ansprüchen Dritter frei.
+    Der Nutzer versichert, dass er alle Rechte an den hochgeladenen Dateien besitzt. Mix Mastering By G führt keine Prüfung auf Markenrechtsverletzungen durch. Mit dem Hochladen stellt der Nutzer den Betreiber von allen Ansprüchen Dritter frei. Der Nutzer haftet für alle Schäden, die durch die Verletzung von Urheberrechten oder sonstigen Schutzrechten entstehen.
+
     ---
+
     ### Datenschutzerklärung
-    Analyse temporär im RAM. Speicherung/Versand erfolgt erst nach Klick auf den Sende-Button per verschlüsselter E-Mail an den Betreiber.
+    **1. Datenschutz auf einen Blick** Die Analyse Ihrer Dateien erfolgt temporär im RAM. Eine Speicherung Ihrer STL-Daten erfolgt erst nach Ihrer ausdrücklichen Bestätigung durch den Versand-Button. Diese werden dann sicher per verschlüsselter E-Mail an den Betreiber übertragen.
+
+    **2. Datenerfassung auf dieser Website** Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber. Die von Ihnen hochgeladenen Dateien werden zum Zwecke der Preiskalkulation und Auftragsabwicklung verarbeitet.
+
+    **3. Datensicherheit** Wir setzen moderne Sicherheitsmaßnahmen ein, um Ihre Daten vor unbefugtem Zugriff zu schützen. Nicht gesendete Dateien werden sofort nach der Sitzung gelöscht.
+
+    **4. Analyse-Tools und Tools von Drittanbietern** Bei Nutzung des WhatsApp-Buttons gelten die Datenschutzbestimmungen von WhatsApp (Meta).
     """)
