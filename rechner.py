@@ -12,7 +12,7 @@ DRIVE_FOLDER_ID = "1Fz-us-qEH6p99bmKqU-nHXfCoh_NrEPq"
 
 st.set_page_config(page_title="3D-Print Calc & Order", page_icon="💰", layout="centered")
 
-# Modernes & cooles Design (Dein Style)
+# Modernes & cooles Design
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
@@ -34,18 +34,22 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. Google Drive Funktion (DER SPEICHER-FIX)
+# 2. Google Drive Funktion (DER FINALE QUOTA-FIX)
 def upload_to_drive(file_path, file_name):
     try:
         creds_info = json.loads(st.secrets["gcp_service_account"])
         creds = service_account.Credentials.from_service_account_info(creds_info)
         service = build('drive', 'v3', credentials=creds)
 
-        file_metadata = {'name': file_name, 'parents': [DRIVE_FOLDER_ID]}
+        file_metadata = {
+            'name': file_name, 
+            'parents': [DRIVE_FOLDER_ID]
+        }
+        
         media = MediaFileUpload(file_path, resumable=True)
         
-        # supportsAllDrives & ignoreDefaultVisibility zwingen Google, 
-        # den Speicherplatz deines Kontos zu nutzen statt den vom Bot.
+        # FIX: supportsAllDrives & ignoreDefaultVisibility zwingen Google,
+        # deinen Speicherplatz zu nutzen, statt den des Bots.
         file_drive = service.files().create(
             body=file_metadata, 
             media_body=media, 
@@ -95,7 +99,6 @@ if uploaded_file:
         
         st.divider()
         st.subheader("📩 3. Bestätigung")
-        st.write("Möchten Sie dieses Modell zahlungspflichtig anfragen?")
         
         col1, col2 = st.columns(2)
         
@@ -121,7 +124,7 @@ if uploaded_file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# --- DEIN VOLLSTÄNDIGER RECHTSTEXT (AUS DEINER NACHRICHT) ---
+# --- DEIN VOLLSTÄNDIGES IMPRESSUM & DATENSCHUTZ ---
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
