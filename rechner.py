@@ -3,42 +3,41 @@ import trimesh
 import tempfile
 import os
 
-# 1. Seite & Design
+# 1. Seite & Design Konfiguration
 st.set_page_config(page_title="3D-Print Calc & Order", page_icon="💰", layout="centered")
 
-# CSS für bessere Mobile-Optik (Buttons breiter, Menüs sauberer)
+# CSS für Mobile-Optimierung und versteckte Menüs
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .stButton>button {width: 100%;}
-    /* Verhindert das Abschneiden von Text auf kleinen Displays */
-    .stSelectbox, .stSlider {margin-bottom: 20px;}
     </style>
     """, unsafe_allow_html=True)
 
 st.title("🚀 3D-Druck Preis-Kalkulator")
 st.markdown("Lade dein Modell hoch und erhalte sofort eine Preisschätzung.")
 
-# --- HAUPTBEREICH (Ersetzt die Sidebar für Handys) ---
-st.subheader("1. Einstellungen")
-
+# 2. Material-Daten & Preise
 material_daten = {
     "PLA": {"preis_per_g": 0.15, "dichte": 1.25},   
     "PETG": {"preis_per_g": 0.22, "dichte": 1.27},  
     "PC (Polycarbonat)": {"preis_per_g": 0.45, "dichte": 1.20} 
 }
 
-# Material und Infill direkt untereinander
+# 3. Hauptbereich Einstellungen (Sichtbar für alle, auch am Handy)
+st.subheader("1. Druck-Einstellungen")
 wahl = st.selectbox("Material wählen:", list(material_daten.keys()))
 infill = st.select_slider("Füllung (Infill %):", options=[15, 40, 70, 100], value=40)
 
 st.divider()
 
-# 2. Datei Upload
+# 4. Datei Upload mit Urheberrechts-Warnung
 st.subheader("2. Modell hochladen")
-file = st.file_uploader("STL-Datei auswählen", type=["stl"])
+st.warning("⚠️ Mit dem Upload bestätigen Sie, dass Sie die notwendigen Rechte/Lizenzen an der Datei besitzen und keine Schutzrechte Dritter verletzen.")
+
+file = st.file_uploader("STL-Datei hier auswählen", type=["stl"])
 
 if file:
     with tempfile.NamedTemporaryFile(delete=False, suffix=".stl") as tmp:
@@ -46,42 +45,66 @@ if file:
         tmp_path = tmp.name
 
     try:
+        # Modell-Analyse
         mesh = trimesh.load(tmp_path)
-        volumen_netto = mesh.volume / 1000  
+        volumen_netto = mesh.volume / 1000  # cm3
         
+        # Infill-Berechnung (Basis-Struktur + Infill-Anteil)
         effektive_fullung = (infill / 100) + 0.15 
         gewicht = volumen_netto * material_daten[wahl]["dichte"] * effektive_fullung
+        
+        # Preisberechnung
         total = gewicht * material_daten[wahl]["preis_per_g"]
         
+        # Mindestpreis
         if total < 5.0: total = 5.0
 
         # Ergebnis-Anzeige
-        st.success(f"### Preis-Schätzung: {total:.2f} €")
+        st.success(f"### Voraussichtlicher Preis: {total:.2f} €")
         
-        # Details übersichtlich auflisten
-        st.info(f"**Gewählt:** {wahl} | **Gewicht:** ca. {gewicht:.1f}g")
-        st.write(f"Abmessungen: {mesh.bounding_box.extents[0]:.1f} x {mesh.bounding_box.extents[1]:.1f} x {mesh.bounding_box.extents[2]:.1f} mm")
+        col_res1, col_res2 = st.columns(2)
+        with col_res1:
+            st.info(f"**Material:** {wahl}")
+        with col_res2:
+            st.info(f"**Gewicht:** ca. {gewicht:.1f}g")
+            
+        st.write(f"**Abmessungen:** {mesh.bounding_box.extents[0]:.1f} x {mesh.bounding_box.extents[1]:.1f} x {mesh.bounding_box.extents[2]:.1f} mm")
 
-        # --- KONTAKT ---
+        # 5. Kontakt-Sektion (Handy-optimiert)
         st.divider()
         st.subheader("3. Anfrage senden")
-        nachricht = f"Hallo Gian, ich möchte '{file.name}' drucken lassen. Material: {wahl}, Infill: {infill}%. Preis: {total:.2f}€."
+        
+        # Nachrichtentext inkl. Urheberrechts-Bestätigung
+        nachricht = (f"Hallo Gian, ich möchte '{file.name}' drucken lassen. "
+                     f"Material: {wahl}, Infill: {infill}%. Preis: {total:.2f}€. "
+                     f"Ich bestätige hiermit, dass ich die Urheberrechte an der Datei besitze.")
+        
         mailto = f"mailto:mixmasteringbyg@gmail.com?subject=Anfrage: {file.name}&body={nachricht}"
         whatsapp = f"https://wa.me/4915563398574?text={nachricht.replace(' ', '%20')}"
 
         # Große Buttons für Touchscreens
-        st.markdown(f'<a href="{whatsapp}" target="_blank" style="text-decoration:none;"><div style="background-color:#25D366;color:white;padding:18px;border-radius:12px;text-align:center;font-weight:bold;margin-bottom:15px;font-size:18px;">💬 Via WhatsApp anfragen</div></a>', unsafe_allow_html=True)
-        st.markdown(f'<a href="{mailto}" style="text-decoration:none;"><div style="background-color:#ff4b4b;color:white;padding:18px;border-radius:12px;text-align:center;font-weight:bold;font-size:18px;">📩 Via E-Mail anfragen</div></a>', unsafe_allow_html=True)
+        st.markdown(f"""
+            <a href="{whatsapp}" target="_blank" style="text-decoration:none;">
+                <div style="background-color:#25D366;color:white;padding:18px;border-radius:12px;text-align:center;font-weight:bold;margin-bottom:15px;font-size:18px;">
+                    💬 Via WhatsApp anfragen
+                </div>
+            </a>
+            <a href="{mailto}" style="text-decoration:none;">
+                <div style="background-color:#ff4b4b;color:white;padding:18px;border-radius:12px;text-align:center;font-weight:bold;font-size:18px;">
+                    📩 Via E-Mail anfragen
+                </div>
+            </a>
+        """, unsafe_allow_html=True)
 
     except Exception as e:
-        st.error(f"Fehler bei der Analyse: Das Modell konnte nicht gelesen werden.")
+        st.error("Fehler bei der Analyse der STL-Datei. Bitte prüfen Sie das Dateiformat.")
     finally:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# --- 5. DEIN ORIGINALES IMPRESSUM & DATENSCHUTZ (VOLLSTÄNDIG) ---
+# 6. VOLLSTÄNDIGES RECHTLICHES (DEIN TEXT)
 st.divider()
-with st.expander("Rechtliche Informationen (Impressum & Datenschutz)"):
+with st.expander("Rechtliche Informationen (Impressum, Datenschutz & Haftung)"):
     st.markdown("""
     ### Impressum
     **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
@@ -104,6 +127,11 @@ with st.expander("Rechtliche Informationen (Impressum & Datenschutz)"):
     Unsere E-Mail-Adresse finden Sie oben im Impressum.  
 
     **Verbraucherstreitbeilegung/Universalschlichtungsstelle:** Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+
+    ---
+    ### Haftungsausschluss (Urheberrecht)
+    **Wichtiger Hinweis zu 3D-Modellen:** Der Nutzer versichert mit dem Hochladen einer Datei und der Auftragserteilung, dass er der Inhaber der Urheber- und Markenrechte für das übermittelte Modell ist oder über die ausdrückliche Erlaubnis zur Vervielfältigung verfügt.  
+    **Mix Mastering By G** übernimmt keine Prüfung der übermittelten Daten auf Verletzung von Schutzrechten Dritter. Sollten Dritte Ansprüche wegen der Verletzung von Urheber- oder Markenrechten geltend machen, stellt der Nutzer Mix Mastering By G von sämtlichen Ansprüchen und Kosten der Rechtsverteidigung frei. Wir drucken keine Waffen oder gesetzeswidrigen Gegenstände.
 
     ---
     ### Datenschutzerklärung
