@@ -7,7 +7,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
-# --- 1. CONFIG & DESIGN ---
+# --- 1. KONFIGURATION ---
 DRIVE_FOLDER_ID = "1Fz-us-qEH6p99bmKqU-nHXfCoh_NrEPq"
 
 st.set_page_config(page_title="3D-Print Calc & Order", page_icon="💰", layout="centered")
@@ -34,7 +34,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. Google Drive Funktion (Quota Fix)
+# 2. Google Drive Funktion (DER SPEICHER-FIX)
 def upload_to_drive(file_path, file_name):
     try:
         creds_info = json.loads(st.secrets["gcp_service_account"])
@@ -44,11 +44,14 @@ def upload_to_drive(file_path, file_name):
         file_metadata = {'name': file_name, 'parents': [DRIVE_FOLDER_ID]}
         media = MediaFileUpload(file_path, resumable=True)
         
+        # supportsAllDrives & ignoreDefaultVisibility zwingen Google, 
+        # den Speicherplatz deines Kontos zu nutzen statt den vom Bot.
         file_drive = service.files().create(
             body=file_metadata, 
             media_body=media, 
             fields='id',
-            supportsAllDrives=True
+            supportsAllDrives=True,
+            ignoreDefaultVisibility=True
         ).execute()
         return file_drive.get('id')
     except Exception as e:
@@ -118,7 +121,7 @@ if uploaded_file:
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-# --- DEIN VOLLSTÄNDIGER RECHTSTEXT AUS DER NACHRICHT ---
+# --- DEIN VOLLSTÄNDIGER RECHTSTEXT (AUS DEINER NACHRICHT) ---
 st.divider()
 with st.expander("⚖️ Impressum & Datenschutz"):
     st.markdown("""
