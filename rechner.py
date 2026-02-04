@@ -9,81 +9,88 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 # =================================================================
-# 1. GLOBALE KONFIGURATION & SETUP
+# 1. GLOBALE KONFIGURATION & SETUP (ZEILE 12+)
 # =================================================================
 
-# Deine Google Drive Ordner-ID (aus deinem Link)
+# Deine Google Drive Ordner-ID (Damit die Dateien im richtigen Ordner landen)
 DRIVE_FOLDER_ID = "1Fz-us-qEH6p99bmKqU-nHXfCoh_NrEPq"
 
-# Streamlit Seiten-Konfiguration (Titel & Icon im Browser-Tab)
+# Streamlit Seiten-Konfiguration
 st.set_page_config(
-    page_title="Gian's 3D-Kalkulator",
-    page_icon="🎨",
+    page_title="Gian's Professional 3D-Kalkulator",
+    page_icon="💰",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# Individuelles CSS für das "Gian-Design" (Mobile Optimierung)
+# =================================================================
+# 2. DESIGN & STYLING (MOBILE OPTIMIERUNG)
+# =================================================================
+
 st.markdown("""
     <style>
-    /* Verstecke Streamlit Standard-Menüs */
+    /* Entferne unnötigen Streamlit-Platz oben */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Buttons stylen: Groß, rund und griffig für Handys */
+    /* Buttons für dicke Finger auf dem Handy optimieren */
     .stButton>button {
         width: 100%;
         border-radius: 20px;
-        height: 4em;
-        font-weight: bold;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
+        height: 4.5em;
+        font-weight: 800;
+        font-size: 1.2rem;
+        background-color: #f0f2f6;
+        transition: all 0.4s ease;
+        border: 2px solid #e0e0e0;
+        margin-top: 10px;
     }
     
-    /* Hover-Effekt für Buttons */
-    .stButton>button:hover {
+    /* Spezielles Grün für den Bestätigen-Button */
+    div.stButton > button:first-child {
         border: 2px solid #25D366;
-        transform: scale(1.02);
     }
 
-    /* Info-Boxen schöner machen */
-    .stAlert {
+    /* Styling für die Preis-Anzeige */
+    .price-box {
+        padding: 20px;
+        background-color: #f8f9fa;
         border-radius: 15px;
+        border-left: 5px solid #25D366;
+        margin: 20px 0;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # =================================================================
-# 2. GOOGLE DRIVE LOGIK (FUNKTIONEN)
+# 3. GOOGLE DRIVE API FUNKTION (DER QUOTA-FIX)
 # =================================================================
 
 def upload_to_drive(file_path, file_name):
     """
-    Diese Funktion verbindet sich mit Google Drive und lädt die Datei hoch.
-    Inklusive Fix für Speicherplatz-Probleme bei Service Accounts.
+    Diese Funktion übernimmt den Upload zu Google Drive.
+    Sie nutzt 'supportsAllDrives', um Speicherplatz-Probleme zu umgehen.
     """
     try:
-        # 1. Zugangsdaten aus den Streamlit Secrets laden
+        # Authentifizierung über die Secrets
         creds_json = st.secrets["gcp_service_account"]
         creds_info = json.loads(creds_json)
         
-        # 2. Authentifizierung aufbauen
+        # Verbindung aufbauen
         creds = service_account.Credentials.from_service_account_info(creds_info)
         service = build('drive', 'v3', credentials=creds)
 
-        # 3. Metadaten für die Datei (Name & Zielordner)
+        # Datei-Metadaten festlegen
         file_metadata = {
             'name': file_name, 
             'parents': [DRIVE_FOLDER_ID]
         }
         
-        # 4. Datei vorbereiten
+        # Datei-Upload vorbereiten
         media = MediaFileUpload(file_path, resumable=True)
         
-        # 5. Der eigentliche Upload-Befehl
-        # Wichtig: supportsAllDrives=True erlaubt Nutzung deines Speichers!
+        # Upload ausführen mit Quota-Workaround
         uploaded_file = service.files().create(
             body=file_metadata, 
             media_body=media, 
@@ -94,144 +101,145 @@ def upload_to_drive(file_path, file_name):
         
         return uploaded_file.get('id')
         
-    except Exception as error:
-        st.error(f"❌ Schwerwiegender Drive-Fehler: {str(error)}")
+    except Exception as drive_err:
+        st.error(f"❌ Fehler bei der Cloud-Übertragung: {str(drive_err)}")
         return None
 
 # =================================================================
-# 3. KALKULATIONS-LOGIK & PREISE
+# 4. PREIS-KALKULATION & MATERIAL-LOGIK
 # =================================================================
 
-# Material-Konfiguration (Preis pro Gramm & Dichte)
+# Definition der Materialien und Kostenfaktoren
 materials = {
     "PLA (Standard)": {"price": 0.15, "density": 1.24},   
-    "PETG (Stabil)": {"price": 0.22, "density": 1.27},  
-    "PC (High-End)": {"price": 0.45, "density": 1.20} 
+    "PETG (Widerstandsfähig)": {"price": 0.22, "density": 1.27},  
+    "PC (Industrie-Standard)": {"price": 0.45, "density": 1.20} 
 }
 
 # =================================================================
-# 4. BENUTZEROBERFLÄCHE (UI)
+# 5. BENUTZEROBERFLÄCHE (UI)
 # =================================================================
 
-st.title("💰 3D-Druck Kalkulator")
-st.write("Berechne sofort deinen Preis und sende die Datei an Gian.")
-
-# --- SCHRITT 1: EINSTELLUNGEN ---
-st.subheader("📋 1. Druck-Einstellungen")
-selected_material = st.selectbox("Wähle dein Material aus:", list(materials.keys()))
-selected_infill = st.select_slider(
-    "Wie stabil soll es sein? (Infill %)", 
-    options=[15, 40, 70, 100], 
-    value=40,
-    help="15% ist leicht, 100% ist massiv."
-)
+st.title("🚀 Gian's 3D-Druck Rechner")
+st.write("Wähle deine Optionen, lade dein Modell hoch und erhalte sofort ein Angebot.")
 
 st.divider()
 
-# --- SCHRITT 2: DATEI UPLOAD ---
-st.subheader("📂 2. Modell hochladen")
-st.info("Bitte lade nur .STL Dateien hoch. Die Analyse startet automatisch.")
-uploaded_file = st.file_uploader("Datei hier reinziehen oder klicken", type=["stl"])
+# Auswahl-Bereich
+st.subheader("⚙️ 1. Konfiguration")
+col_a, col_b = st.columns(2)
+
+with col_a:
+    selected_material = st.selectbox("Material:", list(materials.keys()))
+
+with col_b:
+    selected_infill = st.select_slider("Infill (Füllung %):", options=[15, 40, 70, 100], value=40)
+
+st.divider()
+
+# Upload-Bereich
+st.subheader("📂 2. Modell-Upload")
+st.markdown("Lade hier deine **.STL** Datei hoch. Die Analyse erfolgt in Echtzeit.")
+uploaded_file = st.file_uploader("Datei auswählen...", type=["stl"])
 
 # =================================================================
-# 5. VERARBEITUNG & AKTIONEN
+# 6. VERARBEITUNGS-PROZESS (ANALYSE & BUTTONS)
 # =================================================================
 
 if uploaded_file is not None:
-    # Erstelle eine temporäre Datei (Sicherheitsstandard)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".stl") as tmp_file:
-        tmp_file.write(uploaded_file.getvalue())
-        path_to_tmp = tmp_file.name
+    # Temporäre lokale Speicherung (RAM-Simulation)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".stl") as tmp:
+        tmp.write(uploaded_file.getvalue())
+        tmp_path = tmp.name
 
     try:
-        # Modell-Analyse mit Trimesh
-        with st.spinner('Modell wird analysiert...'):
-            mesh_data = trimesh.load(path_to_tmp)
+        # 3D-Mesh Analyse
+        with st.spinner('Analysiere Geometrie...'):
+            mesh = trimesh.load(tmp_path)
             
-            # Volumen in cm³ berechnen
-            volume_cm3 = mesh_data.volume / 1000  
+            # Berechnung des Volumens und Gewichts
+            volume = mesh.volume / 1000 # in cm³
             
-            # Gewichtsberechnung basierend auf Infill und Materialdichte
-            infill_factor = (selected_infill / 100) + 0.12 # 12% Aufschlag für Wände
-            estimated_weight = volume_cm3 * materials[selected_material]["density"] * infill_factor
+            # Infill-Berechnung (Basis + Infill-Prozent + Wandstärke-Puffer)
+            calc_factor = (selected_infill / 100) + 0.15
+            weight = volume * materials[selected_material]["density"] * calc_factor
             
-            # Endpreis berechnen
-            final_price = estimated_weight * materials[selected_material]["price"]
+            # Preisberechnung
+            total_price = weight * materials[selected_material]["price"]
             
-            # Mindestbestellwert von 5€
-            if final_price < 5.0:
-                final_price = 5.0
+            # Mindestumsatz-Schutz
+            if total_price < 5.0:
+                total_price = 5.0
 
-        # Ergebnis-Box anzeigen
-        st.success(f"### Kalkulierter Preis: **{final_price:.2f} €**")
-        
+        # Preis-Anzeige für den Kunden
         st.markdown(f"""
-        **Zusammenfassung:**
-        * 📦 Modell: `{uploaded_file.name}`
-        * ⚖️ Gewicht: ca. `{estimated_weight:.1f} g`
-        * 🧵 Material: `{selected_material}`
-        """)
+        <div class="price-box">
+            <h2 style="margin:0; color:#1a1a1a;">Voraussichtlicher Preis: {total_price:.2f} €</h2>
+            <p style="margin:5px 0 0 0; color:#666;">Modell: {uploaded_file.name} | Gewicht: ca. {weight:.1f}g</p>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.divider()
 
-        # --- SCHRITT 3: BESTÄTIGUNG ODER ABLEHNUNG ---
-        st.subheader("🚀 3. Anfrage absenden")
-        st.write("Möchtest du dieses Modell jetzt zur Prüfung an Gian senden?")
+        # BESTÄTIGUNG ODER ABLEHNUNG
+        st.subheader("✅ 3. Anfrage bestätigen")
+        st.write("Möchtest du das Modell und die Daten jetzt sicher an Gian übertragen?")
         
-        action_col1, action_col2 = st.columns(2)
+        btn_col1, btn_col2 = st.columns(2)
         
-        with action_col1:
-            if st.button("✅ Bestätigen & Hochladen"):
-                # Dateiname für Drive generieren (Preis_Material_Name)
-                drive_file_name = f"{final_price:.2f}EUR_{selected_material.split(' ')[0]}_{selected_infill}Infill_{uploaded_file.name}"
+        with btn_col1:
+            if st.button("JA, Kalkulation senden"):
+                # Datei-Name für Google Drive (Rechtssicher inkl. Preis)
+                # Format: PREIS_MATERIAL_INFILL_DATEINAME.stl
+                safe_name = f"{total_price:.2f}EUR_{selected_material.replace(' ', '_')}_{selected_infill}Infill_{uploaded_file.name}"
                 
-                with st.spinner('Sende an Google Drive...'):
-                    success_id = upload_to_drive(path_to_tmp, drive_file_name)
+                with st.spinner('Datei wird übertragen...'):
+                    # Upload-Prozess starten
+                    drive_id = upload_to_drive(tmp_path, safe_name)
                     
-                    if success_id:
+                    if drive_id:
                         st.balloons()
-                        st.success("Übertragung abgeschlossen!")
+                        st.success("Übertragung erfolgreich abgeschlossen!")
                         
-                        # WhatsApp Link vorbereiten
-                        text_msg = (f"Hi Gian, ich habe gerade mein Modell '{uploaded_file.name}' hochgeladen. "
-                                   f"Preis: {final_price:.2f}€ | Material: {selected_material}. "
-                                   f"Bitte prüfen!")
-                        whatsapp_url = f"https://wa.me/4915563398574?text={text_msg.replace(' ', '%20')}"
+                        # WhatsApp Link generieren für den direkten Kontakt
+                        wa_msg = (f"Hallo Gian, ich habe gerade mein Modell '{uploaded_file.name}' hochgeladen. "
+                                 f"Kalkulierter Preis: {total_price:.2f}€ | Material: {selected_material} | Infill: {selected_infill}%.")
+                        wa_url = f"https://wa.me/4915563398574?text={wa_msg.replace(' ', '%20')}"
                         
-                        # WhatsApp Button
+                        # Fetter WhatsApp Button
                         st.markdown(f'''
-                            <a href="{whatsapp_url}" target="_blank" style="text-decoration:none;">
-                                <div style="background-color:#25D366; color:white; padding:20px; border-radius:15px; text-align:center; font-weight:bold; font-size:20px; margin-top:10px;">
-                                    Jetzt Nachricht auf WhatsApp senden 💬
+                            <a href="{wa_url}" target="_blank" style="text-decoration:none;">
+                                <div style="background-color:#25D366; color:white; padding:20px; border-radius:15px; text-align:center; font-weight:bold; font-size:18px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                                    Bestellung via WhatsApp abschließen 💬
                                 </div>
                             </a>
                         ''', unsafe_allow_html=True)
 
-        with action_col2:
-            if st.button("❌ Vorgang abbrechen"):
-                st.warning("Abgebrochen. Die Datei wurde vom Server gelöscht.")
-                st.info("Du kannst jetzt ein anderes Modell wählen.")
+        with btn_col2:
+            if st.button("NEIN, Abbrechen"):
+                st.warning("Vorgang wurde abgebrochen. Die Datei wurde nicht gespeichert.")
+                st.info("Lade die Seite neu, um eine andere Datei zu wählen.")
 
     except Exception as e:
-        st.error(f"Fehler bei der Modell-Analyse: {e}")
-        st.warning("Stelle sicher, dass es eine gültige STL-Datei ist.")
+        st.error(f"Fehler bei der Analyse der STL-Datei: {e}")
+        st.info("Bitte stelle sicher, dass es sich um eine valide 3D-Datei handelt.")
     
     finally:
-        # Lösche die temporäre Datei IMMER (Datenschutz/Speicherplatz)
-        if os.path.exists(path_to_tmp):
-            os.remove(path_to_tmp)
+        # DATENSCHUTZ-CHECK: Temporäre Datei lokal löschen
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
 
 # =================================================================
-# 6. RECHTLICHER BEREICH (VOLLSTÄNDIGES IMPRESSUM)
+# 7. RECHTLICHER BEREICH (MAXIMALE LÄNGE & RECHTSSICHERHEIT)
 # =================================================================
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.divider()
 
-with st.expander("⚖️ Rechtliche Informationen & Datenschutz"):
+with st.expander("⚖️ Rechtliche Informationen, Impressum & Datenschutz"):
     st.markdown("""
-    ### Impressum
-    **Angaben gemäß § 5 DDG:** Andrea Giancarlo Sedda  
+    ### Impressum gemäß § 5 DDG
+    **Betreiber der Webseite:** Andrea Giancarlo Sedda  
     Mix Mastering By G  
     c/o Smartservices GmbH  
     Südstraße 31  
@@ -240,22 +248,26 @@ with st.expander("⚖️ Rechtliche Informationen & Datenschutz"):
     **Kontakt:** E-Mail: mixmasteringbyg@gmail.com  
     Telefon: +49 155 63398574  
 
-    **Verantwortlich für den Inhalt:** Andrea Giancarlo Sedda  
-    (Anschrift wie oben)
+    **Redaktionell verantwortlich:** Andrea Giancarlo Sedda  
 
     ---
 
-    ### Urheberrecht & Schutzrechte
-    Durch das Hochladen einer Datei bestätigt der Nutzer, dass er entweder der Urheber der Datei ist oder über die ausdrückliche Erlaubnis verfügt, dieses Modell vervielfältigen zu lassen. Mix Mastering By G übernimmt keine Haftung für Marken- oder Urheberrechtsverletzungen durch Kunden-Modelle. Im Falle einer rechtlichen Inanspruchnahme durch Dritte stellt der Kunde den Betreiber von allen Kosten und Ansprüchen frei.
+    ### Rechtlicher Hinweis zu 3D-Modellen (Urheberrecht)
+    Mit dem Hochladen einer Datei auf diesen Server versichert der Nutzer ausdrücklich, dass er entweder der rechtmäßige Eigentümer des Urheberrechts am Modell ist oder über eine entsprechende Lizenz zur Vervielfältigung verfügt. 
+    Mix Mastering By G übernimmt keine Haftung für die Verletzung von Schutzrechten Dritter. Der Nutzer stellt den Betreiber von allen Ansprüchen Dritter (inkl. Anwaltskosten) frei, die durch die unbefugte Nutzung von 3D-Daten entstehen können. Wir drucken keine Waffen, Waffenteile oder verbotene Gegenstände.
 
     ---
 
-    ### Datenschutzerklärung
-    **1. Datenverarbeitung auf dieser Webseite:** Diese Anwendung läuft auf Streamlit Cloud. Hochgeladene Dateien werden zur Analyse in einem temporären Arbeitsspeicher verarbeitet und nach der Sitzung sofort gelöscht.
+    ### Datenschutzerklärung (DSGVO)
+    **1. Datenverarbeitung:** Die Analyse der 3D-Dateien erfolgt im flüchtigen Arbeitsspeicher (RAM). Es findet keine dauerhafte Speicherung auf dem Webserver statt.
     
-    **2. Google Drive Speicherung:** Eine dauerhafte Speicherung erfolgt ausschließlich nach deiner expliziten Bestätigung durch Klick auf den "Hochladen"-Button. Die Dateien werden in einem passwortgeschützten Google Drive Ordner gespeichert, auf den nur der Betreiber Zugriff hat.
+    **2. Google Drive Speicherung:** Eine Übertragung und dauerhafte Speicherung Ihrer Daten erfolgt ausschließlich nach Ihrer aktiven Zustimmung durch Klick auf den "Senden"-Button. Die Daten werden in einem gesicherten Cloud-Speicher (Google Drive) abgelegt, um die Auftragsabwicklung zu ermöglichen.
     
-    **3. WhatsApp Kontakt:** Wenn du den WhatsApp-Button nutzt, gelten die Datenschutzrichtlinien von WhatsApp (Meta Platforms).
+    **3. Datensicherheit:** Wir setzen moderne SSL/TLS-Verschlüsselung für die Übertragung Ihrer Daten ein. Ihre Daten werden niemals ohne Ihre Zustimmung an Dritte weitergegeben.
+    
+    **4. WhatsApp:** Bei Nutzung des Kontakt-Links gelten die Datenschutzbestimmungen von Meta Platforms.
     """)
 
-# Ende des Codes
+# =================================================================
+# ENDE DES CODES
+# =================================================================
